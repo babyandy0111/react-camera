@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { Camera, CameraType } from './Camera';
 import Resizer from 'react-image-file-resizer';
 import mergeImages from 'merge-images';
-import Base64Downloader from 'react-base64-downloader';
+// import Base64Downloader from 'react-base64-downloader';
 
 const Wrapper = styled.div`
   position: fixed;
@@ -138,6 +138,9 @@ const App = () => {
   const [devices, setDevices] = useState<MediaDeviceInfo[]>([]);
   const [activeDeviceId, setActiveDeviceId] = useState<string | undefined>(undefined);
   const [display, setDisplay] = useState('block');
+  const [fileName, setFileName] = useState('');
+
+  const queryStr = (location.pathname + location.search).substr(1);
 
   const getBase64FromUrl = async (url: string) => {
     const data = await fetch(url);
@@ -199,21 +202,27 @@ const App = () => {
     })();
   });
 
+  useEffect(() => {
+    const arr = queryStr.split('=');
+    setFileName(arr[1]);
+    console.log(arr[1]);
+  }, []);
+
   return (
     <>
       {display === 'block' && (
         <div id="img_head">
           {window.innerWidth > window.innerHeight ? (
             <img
-              src={'https://www.shihjie.com/react-camera-pro/static/media/1.png'}
+              src={'/react-camera-pro/static/media/' + fileName + '.png'}
               alt={'test'}
-              style={{ width: window.innerWidth - 150, height: window.innerHeight }}
+              style={{ width: window.innerWidth - 130, height: window.innerHeight }}
             />
           ) : (
             <img
-              src={'https://www.shihjie.com/react-camera-pro/static/media/1-1.png'}
+              src={'/react-camera-pro/static/media/' + fileName + '-1.png'}
               alt={'test'}
-              style={{ width: window.innerWidth, height: window.innerHeight - 150 }}
+              style={{ width: window.innerWidth, height: window.innerHeight - 130 }}
             />
           )}
         </div>
@@ -271,9 +280,10 @@ const App = () => {
             />
 
             {showDownload ? (
-              <Base64Downloader base64={image} downloadName="file_name">
-                download
-              </Base64Downloader>
+              // <Base64Downloader base64={image} downloadName="file_name">
+              //   download
+              // </Base64Downloader>
+              <></>
             ) : (
               <></>
             )}
@@ -281,7 +291,7 @@ const App = () => {
             <TakePhotoButton
               onClick={async () => {
                 if (camera.current) {
-                  const url = 'https://www.shihjie.com/react-camera-pro/static/media/';
+                  const url = '/react-camera-pro/static/media/';
                   let endpoint = '';
 
                   // 相機圖
@@ -291,9 +301,9 @@ const App = () => {
                   // 相機寬高
                   // alert('W:' + camera.current.getW() + ' H:' + camera.current.getH());
                   if (camera.current.getW() < camera.current.getH()) {
-                    endpoint = url + '1-1.png';
+                    endpoint = url + fileName + '-1.png';
                   } else {
-                    endpoint = url + '1.png';
+                    endpoint = url + fileName + '.png';
                   }
 
                   // 匡
