@@ -211,7 +211,7 @@ const App = () => {
             />
           ) : (
             <img
-              src={'https://www.shihjie.com/react-camera-pro/static/media/1.png'}
+              src={'https://www.shihjie.com/react-camera-pro/static/media/1-1.png'}
               alt={'test'}
               style={{ width: window.innerWidth, height: window.innerHeight - 150 }}
             />
