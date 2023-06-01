@@ -25,7 +25,8 @@ function __makeTemplateObject(cooked, raw) {
   }
   return cooked;
 }
-
+var w = 0;
+var h = 0;
 var Wrapper = styled.div(
   templateObject_1 ||
     (templateObject_1 = __makeTemplateObject(
@@ -161,6 +162,8 @@ var Camera = React.forwardRef(function (_a, ref) {
           }
           canvas.current.width = sW;
           canvas.current.height = sH;
+          w = sW;
+          h = sH;
           var context = canvas.current.getContext('2d');
           if (context && (player === null || player === void 0 ? void 0 : player.current)) {
             context.drawImage(player.current, sX, sY, sW, sH, 0, 0, sW, sH);
@@ -185,10 +188,10 @@ var Camera = React.forwardRef(function (_a, ref) {
         return numberOfCameras;
       },
       getW: function () {
-        return canvas.current.width;
+        return w;
       },
       getH: function () {
-        return canvas.current.height;
+        return h;
       },
     };
   });

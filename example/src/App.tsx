@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import { Camera, CameraType } from './Camera';
-import love from '../src/assets/love-s.png';
+import Resizer from 'react-image-file-resizer';
 import mergeImages from 'merge-images';
 import Base64Downloader from 'react-base64-downloader';
 
@@ -137,7 +137,60 @@ const App = () => {
   const camera = useRef<CameraType>(null);
   const [devices, setDevices] = useState<MediaDeviceInfo[]>([]);
   const [activeDeviceId, setActiveDeviceId] = useState<string | undefined>(undefined);
+  const [display, setDisplay] = useState('block');
 
+  const getBase64FromUrl = async (url: string) => {
+    const data = await fetch(url);
+    const blob = await data.blob();
+    let base64data: string | ArrayBuffer | null = '';
+    await new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(blob);
+      reader.onloadend = () => {
+        base64data = reader.result;
+        resolve(base64data);
+      };
+    });
+    return base64data;
+  };
+  const convertBase64ToBlob = (base64Image: string) => {
+    // Split into two parts
+    const parts = base64Image.split(';base64,');
+
+    // Hold the content type
+    const imageType = parts[0].split(':')[1];
+
+    // Decode Base64 string
+    const decodedData = window.atob(parts[1]);
+
+    // Create UNIT8ARRAY of size same as row data length
+    const uInt8Array = new Uint8Array(decodedData.length);
+
+    // Insert all character code into uInt8Array
+    for (let i = 0; i < decodedData.length; ++i) {
+      uInt8Array[i] = decodedData.charCodeAt(i);
+    }
+
+    // Return BLOB image after conversion
+    return new Blob([uInt8Array], { type: imageType });
+  };
+  const resizeFile = (file: any, w: number, h: number) =>
+    new Promise((resolve) => {
+      Resizer.imageFileResizer(
+        file,
+        w,
+        h,
+        'PNG',
+        100,
+        0,
+        (uri) => {
+          resolve(uri);
+        },
+        'base64',
+        w,
+        h,
+      );
+    });
   useEffect(() => {
     (async () => {
       const devices = await navigator.mediaDevices.enumerateDevices();
@@ -148,9 +201,24 @@ const App = () => {
 
   return (
     <>
-      <div id="img_head">
-        <img src={love} alt={'test'} style={{ width: '100px', height: '100px' }} />
-      </div>
+      {display === 'block' && (
+        <div id="img_head">
+          {window.innerWidth > window.innerHeight ? (
+            <img
+              src={'https://www.shihjie.com/react-camera-pro/static/media/1.png'}
+              alt={'test'}
+              style={{ width: window.innerWidth - 150, height: window.innerHeight }}
+            />
+          ) : (
+            <img
+              src={'https://www.shihjie.com/react-camera-pro/static/media/1.png'}
+              alt={'test'}
+              style={{ width: window.innerWidth, height: window.innerHeight - 150 }}
+            />
+          )}
+        </div>
+      )}
+
       <div id="img_head_back">
         <Wrapper>
           {showImage ? (
@@ -158,6 +226,7 @@ const App = () => {
               image={image}
               onClick={() => {
                 setShowImage(!showImage);
+                setDisplay(display === 'none' ? 'block' : 'none');
               }}
             />
           ) : (
@@ -197,12 +266,13 @@ const App = () => {
               image={image}
               onClick={() => {
                 setShowImage(!showImage);
+                setDisplay(display === 'none' ? 'block' : 'none');
               }}
             />
 
             {showDownload ? (
               <Base64Downloader base64={image} downloadName="file_name">
-                download last version
+                download
               </Base64Downloader>
             ) : (
               <></>
@@ -211,17 +281,39 @@ const App = () => {
             <TakePhotoButton
               onClick={async () => {
                 if (camera.current) {
+                  const url = 'https://www.shihjie.com/react-camera-pro/static/media/';
+                  let endpoint = '';
+
+                  // 相機圖
                   const photo = camera.current.takePhoto();
-                  console.log(camera.current.getW());
-                  console.log(camera.current.getH());
-                  mergeImages([
-                    { src: photo, x: 0, y: 0 },
-                    { src: love, x: 0, y: 0 },
-                  ]).then((b64: any) => {
-                    setImage(b64);
-                    setShowDownload(true);
-                    // console.log(b64);
-                  });
+                  // const blob = convertBase64ToBlob(photo);
+
+                  // 相機寬高
+                  // alert('W:' + camera.current.getW() + ' H:' + camera.current.getH());
+                  if (camera.current.getW() < camera.current.getH()) {
+                    endpoint = url + '1-1.png';
+                  } else {
+                    endpoint = url + '1.png';
+                  }
+
+                  // 匡
+                  const frame = await getBase64FromUrl(endpoint);
+                  const blob2 = convertBase64ToBlob(frame);
+
+                  try {
+                    const png = await resizeFile(blob2, camera.current.getW(), camera.current.getH());
+                    // console.log('o:', image);
+                    mergeImages([
+                      { src: photo, x: 0, y: 0 },
+                      { src: png, x: 0, y: 0 },
+                    ]).then((b64: any) => {
+                      setImage(b64);
+                      setShowDownload(true);
+                      // console.log('n:', b64);
+                    });
+                  } catch (err) {
+                    console.log(err);
+                  }
                 }
               }}
             />
