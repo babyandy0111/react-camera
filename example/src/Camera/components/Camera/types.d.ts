@@ -7,20 +7,22 @@ export declare type SetNumberOfCameras = React.Dispatch<React.SetStateAction<num
 export declare type SetNotSupported = React.Dispatch<React.SetStateAction<boolean>>;
 export declare type SetPermissionDenied = React.Dispatch<React.SetStateAction<boolean>>;
 export interface CameraProps {
-    facingMode?: FacingMode;
-    aspectRatio?: AspectRatio;
-    numberOfCamerasCallback?(numberOfCameras: number): void;
-    videoSourceDeviceId?: string | undefined;
-    errorMessages: {
-        noCameraAccessible?: string;
-        permissionDenied?: string;
-        switchCamera?: string;
-        canvas?: string;
-    };
-    videoReadyCallback?(): void;
+  facingMode?: FacingMode;
+  aspectRatio?: AspectRatio;
+  numberOfCamerasCallback?(numberOfCameras: number): void;
+  videoSourceDeviceId?: string | undefined;
+  errorMessages: {
+    noCameraAccessible?: string;
+    permissionDenied?: string;
+    switchCamera?: string;
+    canvas?: string;
+  };
+  videoReadyCallback?(): void;
 }
 export declare type CameraType = React.ForwardRefExoticComponent<CameraProps & React.RefAttributes<unknown>> & {
-    takePhoto(): string;
-    switchCamera(): FacingMode;
-    getNumberOfCameras(): number;
+  takePhoto(): string;
+  switchCamera(): FacingMode;
+  getNumberOfCameras(): number;
+  getW(): number;
+  getH(): number;
 };

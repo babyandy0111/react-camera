@@ -4,7 +4,10 @@
   "private": true,
   "homepage": "https://purple-technology.github.io/react-camera-pro",
   "dependencies": {
+    "eslint-plugin-prettier": "^4.2.1",
+    "merge-images": "^2.0.0",
     "react": "^17.0.2",
+    "react-base64-downloader": "^2.1.7",
     "react-dom": "^17.0.2",
     "react-scripts": "5.0.0",
     "styled-components": "^5.2.1"
@@ -15,6 +18,8 @@
     "@types/react": "^16.9.13",
     "@types/react-dom": "^16.9.4",
     "@types/styled-components": "^5.0.0",
+    "eslint": "^8.41.0",
+    "eslint-config-prettier": "^8.8.0",
     "gh-pages": "^2.1.1",
     "typescript": "^3.7.2"
   },
