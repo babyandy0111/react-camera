@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "declaration": true,
-    "declarationDir": "./dist",
+    "declarationDir": "./docs",
     "strict": true,
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
@@ -9,7 +9,7 @@
     "strictNullChecks": true,
     "moduleResolution": "node",
     "noImplicitAny": true,
-    "outDir": "./dist",
+    "outDir": "./docs",
     "target": "es5",
     "jsx": "react"
   },
